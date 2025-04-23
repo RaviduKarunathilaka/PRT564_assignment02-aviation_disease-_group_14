@@ -405,3 +405,78 @@ model_sm = sm.OLS(y_train, X_train_sm).fit()
 
 # Get summary (includes p-values and ANOVA-style stats)
 print(model_sm.summary())
+
+####### step wise regression ##################
+# from sklearn.feature_selection import RFE
+
+# #Fit preprocessing and transform manually to use with RFE
+# X_train_transformed = preprocessor.fit_transform(X_train)
+# X_test_transformed = preprocessor.transform(X_test)
+
+# #Stepwise regression using RFE
+# model = LinearRegression()
+# rfe = RFE(model, n_features_to_select=10)  # You can change this number
+# rfe.fit(X_train_transformed, y_train)
+
+# # Predict and evaluate
+# y_pred = rfe.predict(X_test_transformed)
+# mse = mean_squared_error(y_test, y_pred)
+# r2 = r2_score(y_test, y_pred)
+
+
+################ Step wise regression ######################
+
+import statsmodels.api as sm
+
+# Add constant to the X_train for statsmodels
+X_train_sm = sm.add_constant(X_train)
+
+# Initialize lists to store the results
+stepwise_results = []
+
+def stepwise_regression(X_train, y_train, X_test, y_test, features):
+    stepwise_results = []
+    for feature in features:
+        remaining_features = [f for f in features if f != feature]
+        
+        # Subset
+        X_train_subset = X_train[remaining_features]
+        X_test_subset = X_test[remaining_features]
+        
+        # Get dummies
+        X_train_encoded = pd.get_dummies(X_train_subset, drop_first=True)
+        X_test_encoded = pd.get_dummies(X_test_subset, drop_first=True)
+        
+        # Align columns
+        X_train_encoded, X_test_encoded = X_train_encoded.align(X_test_encoded, join='left', axis=1, fill_value=0)
+        
+        # Force numeric types
+        X_train_encoded = X_train_encoded.astype(float)
+        X_test_encoded = X_test_encoded.astype(float)
+        y_train_clean = pd.to_numeric(y_train, errors='coerce')
+        y_test_clean = pd.to_numeric(y_test, errors='coerce')
+
+        # Add constant
+        X_train_const = sm.add_constant(X_train_encoded)
+        X_test_const = sm.add_constant(X_test_encoded)
+
+        # Fit model
+        model = sm.OLS(y_train_clean, X_train_const).fit()
+        y_pred = model.predict(X_test_const)
+
+        # Collect stats
+        stepwise_results.append({
+            'Feature Removed': feature,
+            'Included Columns': X_train_encoded.columns.tolist(),
+            'P-Values': model.pvalues.to_dict(),
+            'R²': model.rsquared,
+            'RMSE': np.sqrt(mean_squared_error(y_test_clean, y_pred))
+        })
+
+    return pd.DataFrame(stepwise_results)
+
+
+stepwise_df = stepwise_regression(X_train, y_train, X_test, y_test, features)
+print("inserting data...............")
+stepwise_df.to_csv("stepwise_df_output_new1.csv", index=False)
+print(stepwise_df)
