@@ -1,0 +1,5 @@
+Feature Removed,Included Columns,P-Values,R²,RMSE
+age_cat_Monthly_Percent,"['age_cat_Yearly_Percent', 'rolling_3m', 'rolling_6m']","{'const': 0.2463764576828036, 'age_cat_Yearly_Percent': 0.0, 'rolling_3m': 0.23250043213416546, 'rolling_6m': 3.398715854838594e-21}",0.6744135247649337,0.08836095997990508
+age_cat_Yearly_Percent,"['age_cat_Monthly_Percent', 'rolling_3m', 'rolling_6m']","{'const': 0.6834319568886611, 'age_cat_Monthly_Percent': 0.0, 'rolling_3m': 0.0013491974837696455, 'rolling_6m': 1.4634415740438296e-06}",0.9011252454961349,0.04167672122572596
+rolling_3m,"['age_cat_Monthly_Percent', 'age_cat_Yearly_Percent', 'rolling_6m']","{'const': 0.4432081070309708, 'age_cat_Monthly_Percent': 0.0, 'age_cat_Yearly_Percent': 1.1368574013585205e-13, 'rolling_6m': 8.969323305390448e-07}",0.9021831496708808,0.04327459836364923
+rolling_6m,"['age_cat_Monthly_Percent', 'age_cat_Yearly_Percent', 'rolling_3m']","{'const': 0.7917196635280526, 'age_cat_Monthly_Percent': 0.0, 'age_cat_Yearly_Percent': 3.0014489386773693e-12, 'rolling_3m': 0.028643785149793516}",0.9017280637945815,0.04334054808318001
